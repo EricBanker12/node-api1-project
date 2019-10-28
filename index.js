@@ -8,6 +8,7 @@ const server = express()
 
 server.use(express.json())
 
+// POST: Add a new user
 server.post('/api/users', (req, res) => {
     // console.log(req.body)
     const {name, bio} = req.body
@@ -33,6 +34,18 @@ server.post('/api/users', (req, res) => {
             res.status(500).json({ error: "There was an error while saving the user to the database" })
         })
     }
+})
+
+// GET: Get all users
+server.get('/api/users', (req, res) => {
+    db.find()
+    .then(resp => {
+        // console.log(resp)
+        res.send(resp)
+    })
+    .catch(err => {
+        res.status(500).json({ error: "The users information could not be retrieved." })
+    })
 })
 
 server.listen(port, () => console.log(`\n=== Listening on port ${port} ===\n`))
