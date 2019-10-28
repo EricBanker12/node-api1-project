@@ -48,4 +48,19 @@ server.get('/api/users', (req, res) => {
     })
 })
 
+// GET: Get a user by id
+server.get('/api/users/:id', (req, res) => {
+    db.findById(req.params.id)
+    .then(resp => {
+        // console.log(resp, typeof resp)
+        if (resp) res.send(resp)
+        else {
+            res.status(404).json({ message: "The user with the specified ID does not exist." })
+        }
+    })
+    .catch(err => {
+        res.status(500).json({ error: "The user information could not be retrieved." })
+    })
+})
+
 server.listen(port, () => console.log(`\n=== Listening on port ${port} ===\n`))
