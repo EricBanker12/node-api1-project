@@ -89,4 +89,39 @@ server.delete('/api/users/:id', async (req, res) => {
     })
 })
 
+// PUT: update a user by id
+server.put('/api/users/:id', async (req, res) => {
+    const {name, bio} = req.body
+    
+    if (!name || typeof name != 'string' || typeof bio != 'string') {
+        res.status(400).json({errorMessage: "Please provide name and bio for the user."})
+        return
+    }
+
+    const user = await db.findById(req.params.id)
+    .then(resp => {
+        // console.log(resp, typeof resp)
+        if (resp) return resp
+        else res.status(404).json({ message: "The user with the specified ID does not exist." })
+    })
+    .catch(err => {
+        res.status(500).json({ error: "The user information could not be modified." })
+    })
+
+    // console.log(user)
+    if (!user) return
+
+    const updatedUser = {...user, name, bio, updated_at: new Date()}
+
+    db.update(req.params.id, updatedUser)
+    .then(resp => {
+        // console.log(resp)
+        if (resp === 1) res.send(updatedUser)
+        else res.status(404).json({ message: "The user with the specified ID does not exist." })
+    })
+    .catch(err => {
+        res.status(500).json({ error: "The user information could not be modified." })
+    })
+})
+
 server.listen(port, () => console.log(`\n=== Listening on port ${port} ===\n`))
